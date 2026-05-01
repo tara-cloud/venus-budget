@@ -9,7 +9,7 @@ services:
       POSTGRES_USER:     ${POSTGRES_USER:-venus_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
     volumes:
-      - /DATA/AppData/venus-budget/postgres:/var/lib/postgresql/data
+      - venus_pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-venus_user} -d ${POSTGRES_DB:-venus_budget}"]
       interval: 10s
@@ -28,11 +28,6 @@ services:
         - container: POSTGRES_PASSWORD
           description:
             en_us: PostgreSQL password (required — pick a strong value)
-      volumes:
-        - container: /var/lib/postgresql/data
-          host: /DATA/AppData/venus-budget/postgres
-          description:
-            en_us: PostgreSQL data directory
 
   app:
     image: pmananthu/venus-budget:1.1.3
@@ -71,6 +66,9 @@ services:
           host: "3000"
           description:
             en_us: Web UI
+
+volumes:
+  venus_pg_data:
 
 networks:
   venus_net:
