@@ -40,7 +40,9 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+
+# Copy lightweight migration runner (uses pg directly, no prisma CLI needed)
+COPY migrate.js ./
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh ./
