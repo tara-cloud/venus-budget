@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import AuthProvider from "@/components/layout/AuthProvider";
 import SwRegister from "@/components/layout/SwRegister";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Venus",
@@ -38,7 +36,7 @@ const themeScript = `
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="en" className={`${GeistSans.variable} h-full antialiased`}>
       <head>
         {/* Runs before any CSS/React paint — prevents theme flash */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
