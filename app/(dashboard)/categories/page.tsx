@@ -285,7 +285,7 @@ export default function CategoriesPage() {
             <Form.Item name="name" label="Category Name" rules={[{required:true}]}><Input placeholder="e.g. Coffee, Groceries" /></Form.Item>
             <Form.Item name="type" label="Type" rules={[{required:true}]}><Select options={TYPE_OPTIONS} placeholder="Select type" /></Form.Item>
             <Form.Item name="group" label={<span>Group <Text type="secondary" style={{fontSize:12}}>(optional)</Text></span>}>
-              <Select showSearch allowClear mode="combobox" placeholder="e.g. Food, Housing..." options={groupOptions} filterOption={(input,opt)=>(opt?.value as string??"").toLowerCase().includes(input.toLowerCase())} />
+              <Select showSearch allowClear placeholder="e.g. Food, Housing..." options={groupOptions} filterOption={(input,opt)=>(opt?.value as string??"").toLowerCase().includes(input.toLowerCase())} />
             </Form.Item>
             <div style={{display:"flex",gap:12}}>
               <Form.Item name="icon" label="Icon (emoji)" style={{flex:1}}><Input maxLength={2} placeholder="e.g. +" /></Form.Item>

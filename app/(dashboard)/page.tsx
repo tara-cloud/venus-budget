@@ -27,7 +27,7 @@ interface DashboardData {
   netSavings: number;
   breakdown: BreakdownItem[];
   groupBreakdown: { group: string; amount: number; color: string }[];
-  trend: { month: number; year: number; income: number; expenses: number }[];
+  trend: { label: string; Income: number; Expenses: number; Net: number }[];
 }
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -203,7 +203,7 @@ export default function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="label" tick={{fontSize:11}} />
                 <YAxis tickFormatter={(v)=>`₹${(v/1000).toFixed(0)}k`} tick={{fontSize:11}} />
-                <Tooltip formatter={(v:unknown,name:string)=>[formatCurrency(v),name]} />
+                <Tooltip formatter={(v: unknown, name: unknown) => [formatCurrency(v), String(name)]} />
                 <Legend />
                 <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" />
                 <Area type="monotone" dataKey="Income" stroke="#16a34a" strokeWidth={2} fill="url(#incomeGrad)" dot={false} />
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                   <XAxis type="number" tickFormatter={(v)=>`₹${(v/1000).toFixed(0)}k`} />
                   <YAxis type="category" dataKey="name" width={90} tick={{fontSize:11}} />
                   <Tooltip formatter={formatCurrency} />
-                  <Bar dataKey="amount" radius={[0,6,6,0]} label={{position:"right",formatter:(v:number)=>`₹${(v/1000).toFixed(1)}k`,fontSize:10}}>
+                  <Bar dataKey="amount" radius={[0,6,6,0]} label={{position:"right",formatter:(v: unknown)=>`₹${(Number(v)/1000).toFixed(1)}k`,fontSize:10}}>
                     {pieData.map((entry,idx)=><Cell key={idx} fill={entry.color} />)}
                   </Bar>
                 </BarChart>
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                     nameKey="group"
                     cx="50%" cy="50%"
                     outerRadius={90}
-                    label={({group,percent}:{group:string;percent:number})=>`${group} ${(percent*100).toFixed(0)}%`}
+                    label={(props: { name?: unknown; percent?: number }) => `${props.name} ${((props.percent ?? 0) * 100).toFixed(0)}%`}
                   />
                   <Tooltip formatter={(v:unknown)=>[`₹${Number(v).toLocaleString("en-IN")}`,"Spent"]} labelFormatter={(l)=>`Group: ${l}`} />
                 </PieChart>
