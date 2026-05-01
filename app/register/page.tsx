@@ -106,13 +106,12 @@ function RegisterForm() {
             <div style={{marginBottom:22}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}>
                 <label htmlFor="r-pwd" style={{fontSize:13,fontWeight:600,color:labelText}}>Password</label>
-                <span role="button" tabIndex={0}
+                <button type="button"
                   aria-label={showPwd ? "Hide password" : "Show password"}
-                  style={{fontSize:12,fontWeight:600,color:toggleColor,cursor:"pointer",userSelect:"none"}}
-                  onClick={() => setShowPwd(v => !v)}
-                  onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setShowPwd(v => !v); }}>
+                  style={{fontSize:12,fontWeight:600,color:toggleColor,cursor:"pointer",background:"none",border:"none",padding:0}}
+                  onClick={() => setShowPwd(v => !v)}>
                   {showPwd ? "Hide" : "Show"}
-                </span>
+                </button>
               </div>
               <input id="r-pwd" type={showPwd ? "text" : "password"} autoComplete="new-password"
                 placeholder="Min. 8 characters" value={password} required

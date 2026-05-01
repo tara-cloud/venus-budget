@@ -28,7 +28,7 @@ services:
       - venus_net
 
   app:
-    image: venus-budget:${APP_VERSION:-1.0.0}
+    image: venus-budget:${APP_VERSION:-1.1.0}
     build:
       context: .
       dockerfile: Dockerfile

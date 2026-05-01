@@ -197,15 +197,14 @@ function LoginForm() {
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
                 <label htmlFor="login-password" style={{ fontSize: 13, fontWeight: 600, color: labelText }}>Password</label>
-                <span
-                  role="button" tabIndex={0}
+                <button
+                  type="button"
                   aria-label={showPwd ? "Hide password" : "Show password"}
-                  style={{ fontSize: 12, fontWeight: 600, color: toggleColor, cursor: "pointer", userSelect: "none" }}
+                  style={{ fontSize: 12, fontWeight: 600, color: toggleColor, cursor: "pointer", background: "none", border: "none", padding: 0 }}
                   onClick={() => setShowPwd(v => !v)}
-                  onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setShowPwd(v => !v); }}
                 >
                   {showPwd ? "Hide" : "Show"}
-                </span>
+                </button>
               </div>
               <input
                 id="login-password"

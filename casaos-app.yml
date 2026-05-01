@@ -1,0 +1,109 @@
+# CasaOS App Store Definition
+# Install with: casaos-cli app install casaos-app.yml
+# Or place in /var/lib/casaos/apps/ on your CasaOS host
+
+name: venus-budget
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-budget_app}
+      POSTGRES_USER:     ${POSTGRES_USER:-budget_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+    volumes:
+      - /DATA/AppData/venus-budget/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-budget_user} -d ${POSTGRES_DB:-budget_app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - venus_net
+    x-casaos:
+      envs:
+        - container: POSTGRES_DB
+          description:
+            en_us: PostgreSQL database name
+        - container: POSTGRES_USER
+          description:
+            en_us: PostgreSQL username
+        - container: POSTGRES_PASSWORD
+          description:
+            en_us: PostgreSQL password (change this!)
+      volumes:
+        - container: /var/lib/postgresql/data
+          description:
+            en_us: PostgreSQL data directory
+
+  app:
+    image: venus-budget:latest
+    restart: unless-stopped
+    ports:
+      - target: 3000
+        published: "3000"
+        protocol: tcp
+    environment:
+      DATABASE_URL:    postgresql://${POSTGRES_USER:-budget_user}:${POSTGRES_PASSWORD:-change_me_in_production}@postgres:5432/${POSTGRES_DB:-budget_app}?schema=public
+      NEXTAUTH_URL:    ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change_me_32_chars_minimum_secret}
+      NODE_ENV:        production
+      DATA_MOUNT_PATH: /data
+    volumes:
+      - /DATA/AppData/venus-budget/app:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - venus_net
+    x-casaos:
+      envs:
+        - container: NEXTAUTH_URL
+          description:
+            en_us: "App URL (e.g. http://your-casaos-ip:3000)"
+        - container: NEXTAUTH_SECRET
+          description:
+            en_us: "Auth secret — run: openssl rand -base64 32"
+      volumes:
+        - container: /data
+          description:
+            en_us: App data (backups, exports, uploads)
+      ports:
+        - container: "3000"
+          description:
+            en_us: Web UI port
+
+networks:
+  venus_net:
+    driver: bridge
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+    - arm
+  main: app
+  store_app_id: venus-budget
+  category: Finance
+  author: venus-budget
+  developer: venus-budget
+  icon: https://raw.githubusercontent.com/your-org/venus-budget/main/public/icon.svg
+  screenshot_link:
+    - https://raw.githubusercontent.com/your-org/venus-budget/main/public/screenshot.png
+  thumbnail: https://raw.githubusercontent.com/your-org/venus-budget/main/public/icon.svg
+  description:
+    en_us: "Personal finance tracker — track income & expenses, set budgets, forecast cash flow, and manage recurring transactions. PWA-ready with offline support."
+  tagline:
+    en_us: Track · Budget · Forecast
+  title:
+    en_us: Venus Budget
+  index: /
+  port_map: "3000"
+  scheme: http
+  tips:
+    before_install:
+      en_us: |
+        Change NEXTAUTH_SECRET to a strong random value before first use.
+        Generate one with: openssl rand -base64 32
+  version: "1.1.0"

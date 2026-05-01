@@ -2,9 +2,22 @@
 
 All notable changes to Venus Budget App are documented here.
 
+## [1.1.0] — 2026-05-01
+
+### Fixed
+
+- **Password Show/Hide toggle** — replaced `span[role=button]` with a real `<button type="button">` on both login and register pages; fixes unresponsive toggle on Chrome/Safari macOS
+
+### Added in 1.1.0
+
+- **CasaOS app store YAML** (`casaos-app.yml`) — one-file install for CasaOS with PostgreSQL + app service, host-mounted data volumes, and pre-install tips for secret rotation
+
+---
+
 ## [1.0.0] — 2026-05-01
 
-### Added
+### Added in 1.0.0
+
 - **Authentication** — email/password login with NextAuth.js, JWT sessions
 - **Team-based login themes** — `?team=finance|engineering|marketing|ops` URL parameter
 - **Dark/Light/System theme** — reads OS preference, persists in localStorage, toggle in sidebar/bottom nav
@@ -19,6 +32,7 @@ All notable changes to Venus Budget App are documented here.
 - **PWA** — service worker, offline support, manifest
 
 ### Technical
+
 - Next.js 16 + React 19 + TypeScript
 - Ant Design 6 (dark/light theme via ConfigProvider)
 - PostgreSQL + Prisma ORM
