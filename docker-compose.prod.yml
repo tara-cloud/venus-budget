@@ -1,0 +1,62 @@
+# Venus Budget App — Production (Casaos / Self-hosted)
+#
+# Usage:
+#   docker-compose -f docker-compose.prod.yml up -d
+#
+# Data persistence:
+#   - PostgreSQL data: ./data/postgres (host mount → survives container restarts)
+#   - App data (backups, exports): ./data/app
+#   Set DATA_PATH env var to override (default: ./data)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-budget_app}
+      POSTGRES_USER:     ${POSTGRES_USER:-budget_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+    volumes:
+      # Mount to host for persistent data — survives container restarts & upgrades
+      - ${DATA_PATH:-./data}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-budget_user} -d ${POSTGRES_DB:-budget_app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - venus_net
+
+  app:
+    image: venus-budget:${APP_VERSION:-1.0.0}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL:     "postgresql://${POSTGRES_USER:-budget_user}:${POSTGRES_PASSWORD:-change_me_in_production}@postgres:5432/${POSTGRES_DB:-budget_app}?schema=public"
+      NEXTAUTH_URL:     "${NEXTAUTH_URL:-http://localhost:3000}"
+      NEXTAUTH_SECRET:  "${NEXTAUTH_SECRET:-change_me_32_chars_minimum_secret}"
+      NODE_ENV:         production
+      # CasaOS: DATA_MOUNT_PATH points to the mounted volume inside the container
+      DATA_MOUNT_PATH:  /data
+    volumes:
+      # App data: backups, CSV exports, SMS imports
+      - ${DATA_PATH:-./data}/app:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - venus_net
+    labels:
+      # CasaOS app metadata
+      - "casaos.name=Venus Budget"
+      - "casaos.icon=https://raw.githubusercontent.com/your-org/venus-budget/main/public/icon.svg"
+      - "casaos.description=Personal finance tracker — track, budget, and forecast"
+      - "casaos.web_ui_port=3000"
+
+networks:
+  venus_net:
+    driver: bridge

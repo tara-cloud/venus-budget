@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#6366f1"/>
+  <!-- Coin / rupee symbol -->
+  <text
+    x="256"
+    y="330"
+    font-family="Arial, sans-serif"
+    font-size="260"
+    font-weight="bold"
+    fill="white"
+    text-anchor="middle"
+  >₹</text>
+</svg>
