@@ -92,7 +92,7 @@ export default function TransactionsPage() {
   }
 
   async function onSave(values: Record<string, unknown>) {
-    const payload = { ...values, date: (values.date as dayjs.Dayjs).toISOString() };
+    const payload = { ...values, date: (values.date as dayjs.Dayjs).format("YYYY-MM-DD") };
     if (editing) {
       await fetch(`/api/transactions/${editing.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     } else {

@@ -51,7 +51,7 @@ function SmsImport() {
     await fetch("/api/transactions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accountId, amount: parsed.amount, type: parsed.type, description: parsed.description, date: parsed.date ?? new Date().toISOString(), source: "sms" }),
+      body: JSON.stringify({ accountId, amount: parsed.amount, type: parsed.type, description: parsed.description, date: parsed.date ?? new Date().toISOString().split("T")[0], source: "sms" }),
     });
     setSaving(false);
     setSmsText(""); setParsed(null);
