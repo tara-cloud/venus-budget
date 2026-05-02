@@ -26,23 +26,31 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const PAGE_SIZE = 20;
   const [form] = Form.useForm();
   const selectedType = Form.useWatch("type", form);
 
-  const load = useCallback(async () => {
+  const loadTransactions = useCallback(async (p: number) => {
     setLoading(true);
-    const [t, a, c] = await Promise.all([
-      fetch("/api/transactions").then((r) => r.json()),
-      fetch("/api/accounts").then((r) => r.json()),
-      fetch("/api/categories").then((r) => r.json()),
-    ]);
+    const t = await fetch(`/api/transactions?page=${p}&limit=${PAGE_SIZE}`).then((r) => r.json());
     setTransactions(t.items ?? []);
-    setAccounts(a);
-    setCategories(c);
+    setTotal(t.total ?? 0);
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  const loadStatic = useCallback(async () => {
+    const [a, c] = await Promise.all([
+      fetch("/api/accounts").then((r) => r.json()),
+      fetch("/api/categories").then((r) => r.json()),
+    ]);
+    setAccounts(a);
+    setCategories(c);
+  }, []);
+
+  useEffect(() => { loadStatic(); }, [loadStatic]);
+  useEffect(() => { loadTransactions(page); }, [loadTransactions, page]);
 
   // Category options grouped by group, filtered by selected transaction type
   const categoryOptions = useMemo(() => {
@@ -99,15 +107,15 @@ export default function TransactionsPage() {
       await fetch("/api/transactions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     }
     setModalOpen(false);
-    await load();
+    await loadTransactions(page);
     message.success(editing ? "Transaction updated" : "Transaction added");
   }
 
-  async function onDelete(id: string) {
+  const onDelete = useCallback(async (id: string) => {
     await fetch(`/api/transactions/${id}`, { method: "DELETE" });
-    await load();
+    await loadTransactions(page);
     message.success("Deleted");
-  }
+  }, [loadTransactions, page]);
 
   const columns = [
     { title: "Date", dataIndex: "date", key: "date", render: (d: string) => dayjs(d).format("DD MMM YYYY"), sorter: (a: Transaction, b: Transaction) => new Date(a.date).getTime() - new Date(b.date).getTime() },
@@ -136,7 +144,20 @@ export default function TransactionsPage() {
         <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Add Transaction</Button>
       </div>
 
-      <Table rowKey="id" columns={columns} dataSource={transactions} loading={loading} pagination={{ pageSize: 20 }} scroll={{ x: "max-content" }} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={transactions}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: PAGE_SIZE,
+          total,
+          onChange: (p) => setPage(p),
+          showSizeChanger: false,
+        }}
+        scroll={{ x: "max-content" }}
+      />
 
       <Modal
         title={editing ? "Edit Transaction" : "Add Transaction"}

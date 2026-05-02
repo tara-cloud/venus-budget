@@ -61,11 +61,12 @@ export default function DashboardPage() {
   const [cfRange,  setCfRange]  = useState<1|3|6|12>(12);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`/api/dashboard?cfRange=${cfRange}`)
       .then((r) => r.json())
       .then(setData)
       .finally(() => setLoading(false));
-  }, []);
+  }, [cfRange]);
 
   if (loading) return <div className="flex justify-center py-20"><Spin size="large" /></div>;
   if (!data)   return null;

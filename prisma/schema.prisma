@@ -81,6 +81,9 @@ model Transaction {
   @@index([userId])
   @@index([userId, date])
   @@index([userId, categoryId])
+  @@index([userId, date, type])
+  @@index([userId, accountId, date])
+  @@index([userId, type, date])
 }
 
 model Budget {
