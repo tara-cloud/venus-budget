@@ -13,6 +13,7 @@ export default function DashboardClientLayout({ children }: Readonly<{ children:
 
   return (
     <ConfigProvider
+      select={{ showSearch: false }}
       theme={{
         algorithm: dark ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
         token: {
