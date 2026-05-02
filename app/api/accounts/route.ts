@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { name, type, balance, currency } = await req.json();
+  const { name, type, balance, currency, tags } = await req.json();
   if (!name || !type) {
     return NextResponse.json({ error: "Name and type are required" }, { status: 400 });
   }
@@ -60,8 +60,9 @@ export async function POST(req: NextRequest) {
       userId: session.user.id,
       name,
       type,
-      balance: balance ?? 0,  // stored as opening balance
+      balance: balance ?? 0,
       currency: currency ?? "INR",
+      tags: Array.isArray(tags) ? tags : [],
     },
   });
   return NextResponse.json(account, { status: 201 });

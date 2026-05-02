@@ -15,9 +15,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const updated = await prisma.account.update({
     where: { id },
     data: {
-      ...(body.name !== undefined && { name: body.name }),
-      ...(body.balance !== undefined && { balance: body.balance }),
+      ...(body.name     !== undefined && { name:     body.name }),
+      ...(body.type     !== undefined && { type:     body.type }),
+      ...(body.balance  !== undefined && { balance:  body.balance }),
       ...(body.currency !== undefined && { currency: body.currency }),
+      ...(body.tags     !== undefined && { tags:     Array.isArray(body.tags) ? body.tags : [] }),
     },
   });
   return NextResponse.json(updated);

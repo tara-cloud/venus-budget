@@ -24,7 +24,8 @@ model Account {
   id               String         @id @default(cuid())
   userId           String
   name             String
-  type             String         // bank | cash | credit
+  type             String         // bank | cash | credit | stock
+  tags             String[]       @default([])
   balance          Decimal        @default(0) @db.Decimal(12, 2)
   currency         String         @default("INR")
   plaidAccessToken String?
