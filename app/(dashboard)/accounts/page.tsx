@@ -11,9 +11,10 @@ const TYPE_OPTIONS = [
   { value: "bank", label: "Bank" },
   { value: "cash", label: "Cash" },
   { value: "credit", label: "Credit Card" },
+  { value: "stock", label: "Stock / Investment" },
 ];
 
-const TYPE_COLOR: Record<string, string> = { bank: "blue", cash: "green", credit: "orange" };
+const TYPE_COLOR: Record<string, string> = { bank: "blue", cash: "green", credit: "orange", stock: "purple" };
 
 export default function AccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
