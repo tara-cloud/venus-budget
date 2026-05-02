@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Venus",
   description: "Your personal finance tracker — track, budget, and forecast",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
